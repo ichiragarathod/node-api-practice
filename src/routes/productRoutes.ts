@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
 import Product from "../models/Product";
 
+import authMiddleware from "../middleware/authMiddleware";
 const router = express.Router();
 
 // CREATE — POST /api/products
-router.post("/", async (req: Request, res: Response) => {
+router.post("/",authMiddleware, async (req: Request, res: Response) => {
   try {
     const product = new Product(req.body);
     const savedProduct = await product.save();
@@ -15,7 +16,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 // READ ALL — GET /api/products
-router.get("/", async (req: Request, res: Response) => {
+router.get("/",async (req: Request, res: Response) => {
   try {
     const products = await Product.find();
     res.status(200).json(products);
@@ -25,7 +26,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // READ ONE — GET /api/products/:id
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id",async (req: Request, res: Response) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
@@ -38,7 +39,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // UPDATE — PUT /api/products/:id
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id",authMiddleware, async (req: Request, res: Response) => {
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
@@ -55,7 +56,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 // DELETE — DELETE /api/products/:id
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id",authMiddleware, async (req: Request, res: Response) => {
   try {
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
     if (!deletedProduct) {

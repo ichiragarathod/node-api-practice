@@ -6,21 +6,24 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import productRoutes from "./routes/productRoutes"; 
-
+import authRoutes from "./routes/authRoutes";
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI as string;
 
+// Middleware — REQUIRED for req.body to work
+app.use(cors());
+app.use(express.json());
+
 // Test route
 app.get("/api/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok", message: "Server is running" });
 });
 
-// Product routes 👈 નવી line
 app.use("/api/products", productRoutes);
-
+app.use("/api/auth", authRoutes); 
 
 // Connect to MongoDB, then start server
 mongoose
